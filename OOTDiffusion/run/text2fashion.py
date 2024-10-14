@@ -19,7 +19,7 @@ from datetime import datetime
 
 # Initialize OpenAI API
 
-client = OpenAI(api_key = '<api-key>')
+client = OpenAI(api_key = '<api_key>')
 
 parser = argparse.ArgumentParser(description='text2fashion')
 parser.add_argument('--images_path', type=str, default="", required=True)
