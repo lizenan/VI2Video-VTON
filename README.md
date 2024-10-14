@@ -53,12 +53,13 @@ The main contributions of this application are:
     <img src="asset/vivid_hand_issue2.png" alt="Parse" width="200"/>
     <img src="asset/vivid_hand_issue3.png" alt="Parse" width="200"/>
 
+    ![failure1](./asset/vivid_original_results.gif)
+
     in order to fix such problem I applied MP+SAM to modify the Human Parse Mask Result preseving hands. please check `asset/vivid_sam_hands.mp4` for the differences.
 
     <img src="asset/SAM_hands.png" alt="Parse" width="200"/>
-    <img src="asset/vivid_sam_hands1.png" alt="Parse" width="200"/>
-    <img src="asset/vivid_sam_hands2.png" alt="Parse" width="200"/>
-    <img src="asset/vivid_sam_hands3.png" alt="Parse" width="200"/>
+
+    ![failure1](./asset/vivid_sam_hands.gif)
 
 5. DensePose Video Generation.
     
@@ -69,7 +70,7 @@ The main contributions of this application are:
     as we can see in `asset/vivid_sam_hands.mp4` video, even though we fixed the hand inconsistency, the cloth's consistent issue still remain, in order to fix such problem, we applied Input Noise Modification. Instead of using random latent noise as the initial input. I first denoise the first frame's latent, and combine it with the original noise based on the noise steps we set. In here, the adding noise step is a tune-able hyper-parameter. Since ViViD is using DDIM so we apply adding noise after the denosing is completed to have more control on the noise level. I observe ~600 can produce significant improvements in general cases that I have tested on. please tune this number based on your own purpose of this application. please check `./src/pipelines/pipeline_pose2vid_long.py` for detail implementation. After all modification, our final results for text driven and image driven could be found in `asset/VI2Video-VTON_img_result.mp4` and `asset/VI2Video-VTON_text_result.mp4`
     
 
-## Comparison Results ViViD-Vanilla Vs VI2Video-VTON
+## Comparison between ViViD-Vanilla Vs VI2Video-VTON
 ![result1](./asset/vivid-VI2V.gif)
 
 ## More Examples
