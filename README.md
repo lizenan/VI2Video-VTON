@@ -76,7 +76,7 @@ The main contributions of this application are:
 ![result2](./asset/VI2V_upper.gif)
 ![result3](./asset/VI2V_vango.gif)
 ![result4](./asset/example_result_dress.gif)
-![result5](./asset/vivid-VI2V2.gif.gif)
+![result5](./asset/example_result2.gif)
 
 
  
