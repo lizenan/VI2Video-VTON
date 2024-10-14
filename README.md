@@ -5,16 +5,16 @@ To the best of my knowledge, this is the first open sourced text-to-video virtua
 
 
 ## Motivation
-In current Virtual Try On research [CVPR2024 1st virtual try-on workshop](https://vto-cvpr24.github.io/), [A Curated List of Awesome Virtual Try-on (VTON)](https://github.com/minar09/awesome-virtual-try-on?tab=readme-ov-file#Prompt-based-Virtual-Try-on), people are focusing more on 2D/3D generation. I want to build an application that can provide stable quality on video virtual try-on with text prompt or fashion images accessible to public in one command line manner. ViViD set me an amazing starting point. I also tried StableVITON with Input Noisy Injection can also provide reasonable results, but the inference process requires previous frame intermedia results which makes the frame generation cannot generate in parallel, it slows the process too significantly. ViViD's solution is similar to AnimateDiff which means it has temporal transformer module can signficantly boost the process time at the same time keep information consistency between frames in a certain level.
+In current Virtual Try On research [CVPR2024 1st virtual try-on workshop](https://vto-cvpr24.github.io/), [A Curated List of Awesome Virtual Try-on (VTON)](https://github.com/minar09/awesome-virtual-try-on?tab=readme-ov-file#Prompt-based-Virtual-Try-on), people are focusing more on 2D/3D generation. I want to build an application that can provide stable quality on video virtual try-on with text prompt or fashion images accessible to public in one command line manner. ViViD set me an amazing starting point. I also tried StableVITON with Input Noise Modification can also provide reasonable results, but the inference process requires previous frame intermediate results which makes the frames cannot generate in parallel, it slows the process too significantly. ViViD's solution is similar to AnimateDiff which means it has a temporal transformer module can signficantly boost the process time at the same time keep information consistent between frames in a certain level.
 
 The main contributions of this application are: 
 1. **Leveraging the power of YOLO-World, SAM, Mediapipeline-hand detection, and pratical CV solutions to provide stable results from arbitrary shape videos and images.**  Most of inference code of the research repos are mainly focusing on datasets are well-established, which providing accurate human agonstic, agnostic masks, cloth images, cloth masks, Human Pose based information with uniformed image/video shape. this application can automatically generate these information for users without extra manual process steps.
 2. **Leverage the power of CLIP and DALLE-3, this application supports text driven outfit change.** I provided two methods: retrieval or generation from text to fashion cloth images. 
 3. **Fine tune ViViD to improve generation quality via multiple directions.**  
-    1) Input Noisy Modification. 
+    1) Input Noise Modification. 
     2) Human Parse Mask Modification with MP and SAM
     3) Use Detection+padding for data resizing without deformation.
-    4) Overlap Frame increasing during inference. FYI, I Observed consistency improvements by increasing, but it was increase the process time, so I didn't commit this change to repo, if you need this function go to  `vivid.py` Line #183 for tuning the number.
+    4) Overlap Frame increasing during inference. FYI, I Observed consistency improvements by increasing the overlap hyper-parameter, but it increased the process time, so I didn't commit this change to repo, if you need this function go to  `vivid.py Line #183` for tuning the number.
 
 
 ## Key Components
@@ -23,15 +23,15 @@ The main contributions of this application are:
     based on observation, ViViD is very sensitive to deformation![deformation failure](asset/vivid_ratio_sensitive.png). if the cloth and videos are not in the wdith/height ratio to 0.75, the generation quality will dropdown significantly. we use detection and padding/cropping to make sure our input images without any deformation
 2. **Cloth image generation/retrieval**
 
-    I use ViViD+HR-VTON dataset for our retrieval solution. apply CLIP-ViT-L14 model to generate and store embeddings. based on given prompt it will provide the most match cloth image for further generation
+    I use ViViD+HR-VTON dataset for our retrieval solution. applying CLIP-ViT-L14 model to generate and store embeddings. based on the given prompt it will provide the most matched cloth image for further video editing
     
-    "Donald Duck T Shirt"
+    "Donald Duck T Shirt -- retrieved"
     
     <img src="asset/13674_00.jpg" alt="Donald Duck" width="200"/>
     
     For generation solution, I use openai Dalle-3 api to achieve the image acquisition. please input your open api key to `./OOTDiffusion/run/text2fashion.py` for generation function.
 
-    ""Van Gogh starry sky T-shirt"
+    ""Van Gogh starry sky T-shirt -- generated"
     
     <img src="asset/modified_image_20241013_030924.jpg" alt="Van Gogh" width="200"/>
 
@@ -43,7 +43,7 @@ The main contributions of this application are:
     <img src="asset/resized_mask.jpg" alt="SAM" width="225"/>
 
 4. **Human Parse Mask Generation**.
-    We follow [OOTDiffusion](https://github.com/levihsu/OOTDiffusion/tree/main?tab=readme-ov-file)'s pipeline for Human Parse Mask Generation. I observed the Human Parse Mask algorithm failed to recognize hands segmentation when hands area are within the cloth segmentation. 
+    We follow [OOTDiffusion](https://github.com/levihsu/OOTDiffusion/tree/main?tab=readme-ov-file)'s pipeline for Human Parse Mask Generation. I observed the Human Parse Mask algorithm failed to recognize hands segmentation when hands area are within the cloth segmentation area. 
 
     <img src="asset/ori_human_parse.png" alt="Parse" width="200"/>
 
@@ -66,7 +66,7 @@ The main contributions of this application are:
 
 6. **Input Noise Modification**.
 
-    as we can see in `asset/vivid_sam_hands.mp4` video, even though we fix the hand inconsistency, the cloth's consistent issue still remain, in order to fix such problem, we applied Input Noise Modification. Instead of using random latent noise as the initial input. I first denoise first frame's latent, and combine it with the original noise. in here, the adding noise step is a tune-able hyper-parameter. Since ViViD is using DDIM so we apply adding noise after the denosing is complete to have more control on the noise level. I observe ~600 can produce significant in general cases I have tested. please tune this base on your own purpose of this application. please check `./src/pipelines/pipeline_pose2vid_long.py` for detail implementation. After all modification, our final results for text driven and image driven could be found in `asset/VI2Video-VTON_img_result.mp4` and `asset/VI2Video-VTON_text_result.mp4`
+    as we can see in `asset/vivid_sam_hands.mp4` video, even though we fixed the hand inconsistency, the cloth's consistent issue still remain, in order to fix such problem, we applied Input Noise Modification. Instead of using random latent noise as the initial input. I first denoise the first frame's latent, and combine it with the original noise based on the noise steps we set. In here, the adding noise step is a tune-able hyper-parameter. Since ViViD is using DDIM so we apply adding noise after the denosing is completed to have more control on the noise level. I observe ~600 can produce significant improvements in general cases that I have tested on. please tune this number based on your own purpose of this application. please check `./src/pipelines/pipeline_pose2vid_long.py` for detail implementation. After all modification, our final results for text driven and image driven could be found in `asset/VI2Video-VTON_img_result.mp4` and `asset/VI2Video-VTON_text_result.mp4`
     
 
 ## Comparison Results ViViD-Vanilla Vs VI2Video-VTON
@@ -99,10 +99,10 @@ conda activate ti2vton
 pip install torch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2
 pip install -r requirements.txt  
 ```
-Warning: the requirements.txt hasn't been fully debugged. If you facing any problems on version conflicts, feel free to contact me or checkout the Model I have mentioned above for full list of requirements. 
+Warning: the requirements.txt hasn't been fully debugged. If you faced any problems on installing, feel free to contact me or checkout the README.MD files from the repos I have mentioned above for the full list of requirements. 
 
 ### Weights (Thanks for ViViD's and OOTD's detail instructions!)
-You can place the weights anywhere you like, for example, ```./ckpts```. If you put them somewhere else, you just need to update the path in ```./configs/prompts/*.yaml```.
+You can place the weights anywhere you like, for example, ```./ckpts```. If you put them somewhere else, you just need to update the path for the following models.
 
 
 #### Stable Diffusion Image Variations
@@ -112,11 +112,13 @@ cd ckpts
 git lfs install
 git clone https://huggingface.co/lambdalabs/sd-image-variations-diffusers
 ```
+change `./configs/prompts/upper1.yaml` to your stored checkpoint location 
 #### SD-VAE-ft-mse
 ```
 git lfs install
 git clone https://huggingface.co/stabilityai/sd-vae-ft-mse
 ```
+change `./configs/prompts/upper1.yaml` to your stored checkpoint location 
 #### Motion Module
 Download [mm_sd_v15_v2](https://huggingface.co/guoyww/animatediff/blob/main/mm_sd_v15_v2.ckpt)
 
@@ -149,7 +151,7 @@ download [SAM](https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.
 change `./OOTDiffusion/run/run_ootd_agnostic.py Line 63` to your stored checkpoint location
 
 ## Inference
-inherit from OOTDiffusion and ViViD, we support upper mode or full(dress) mode editing
+inherit from OOTDiffusion and ViViD, we support upper mode or full(dress) mode editing, please run `run_img.sh` for image driven video editing and `run_text.sh` for text driven video editing.
 ```
 bash run_img.sh <path/to/video> <path/to/cloth_img> upper/full
 
@@ -157,8 +159,9 @@ bash run_text.sh <path/to/video> "text prompt" upper/full
 ```
 
 ## TO-DO
-1. this application is built in two days, the strcture and checkpoint calling config is messy, I will refactor them in one config file. 
-1. Inspired by Animate Anyone's spatial attention module, for improving the video consistency, I'm planning to reconstructure the ViViD inference code to concatenate with previous generated frames' intermediate values with the following frames for the following frames generation. see if it help with the generation quality. 
+1. this application is built in two days, the strcture and checkpoint calling config is messy, I will refactor them in one config file manner.
+2. there are some workflow optimization tasks could do to reduce the process time. 
+3. Inspired by Animate Anyone's spatial attention module, for improving the video consistency, I'm planning to reconstruct the ViViD inference code to concatenate with previous generated frames' intermediate values with the following frames for the following frames generation. see if it helps with the generation quality. 
 
 
 ## Thanks to
