@@ -1,5 +1,5 @@
 # VI2Video-VTON
-VI2Video-VTON: providing simple text description or cloth images to provide virtual try on function in video. This Project is built based on ViViD, OOTDiffusion, SAM, Densepose, Yolo-World, Clip, Self Correction for Human Parsing, Mediapipeline.
+VI2Video-VTON: providing simple text description or cloth images to achieve virtual try-on function in video. This Project is built based on ViViD, OOTDiffusion, SAM, Densepose, Yolo-World, Clip, Self Correction for Human Parsing, Mediapipeline.
 
 To the best of my knowledge, this is the first open sourced text-to-video virtual try-on application.
 
