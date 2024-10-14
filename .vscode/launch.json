@@ -1,0 +1,19 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python Debugger: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "args": ["--onnx", "/mnt/data/vivid_ckpts/yolow-l.onnx", "--image", "/home/zenan/ViViD/data/cloth/1055822_in_xl.jpg", "--text", "cloth"]
+            //["--images_path", "/mnt/data/vivid_ckpts/ViViD_HR-VITON", "--text_description", "yellow tshirt", "--o", "./"]
+            //["--config","./configs/prompts/upper1.yaml"]
+            //["--model_path","/home/zenan/ViViD/heygen2.mp4", "--cloth_path", "/home/zenan/ViViD/OOTDiffusion/run/examples/garment/922309_in_xl.jpg", "--scale", "2.0", "--sample","4", "--category", "0" ],
+        }
+    ]
+}

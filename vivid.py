@@ -26,6 +26,8 @@ def parse_args():
     parser.add_argument("--cfg", type=float, default=3.5)
     parser.add_argument("--steps", type=int, default=20)
     parser.add_argument("--fps", type=int)
+    parser.add_argument("--video_path", type=str)
+    parser.add_argument("--cloth_path", type=str)
     args = parser.parse_args()
 
     return args
@@ -112,9 +114,12 @@ def main():
     save_dir = Path(f"output/{date_str}/{save_dir_name}")
     save_dir.mkdir(exist_ok=True, parents=True)
 
-    model_video_paths = config.model_video_paths
-    cloth_image_paths = config.cloth_image_paths
+    #model_video_paths = config.model_video_paths
+    #cloth_image_paths = config.cloth_image_paths
 
+    model_video_paths = [args.video_path]
+    cloth_image_paths = [args.cloth_path]
+    
     transform = transforms.Compose(
         [transforms.Resize((height, width)), transforms.ToTensor()]
     )
@@ -152,8 +157,9 @@ def main():
         for pose_image_pil in pose_images[:clip_length]:
             pose_list.append(pose_image_pil)
 
+        clip_length = video_tensor.shape[1]
         video_tensor = video_tensor.unsqueeze(0)
-
+        
 
         for cloth_image_path in cloth_image_paths:
             cloth_name =  Path(cloth_image_path).stem
@@ -174,6 +180,7 @@ def main():
                 steps,
                 guidance_scale,
                 generator=generator,
+                context_overlap = 4,#20,
             )
             video = pipeline_output.videos
 

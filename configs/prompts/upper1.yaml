@@ -1,20 +1,31 @@
-pretrained_base_model_path: "ckpts/sd-image-variations-diffusers"
-pretrained_vae_path: "ckpts/sd-vae-ft-mse"
-image_encoder_path: "ckpts/sd-image-variations-diffusers/image_encoder"
+pretrained_base_model_path: "/mnt/data/vivid_ckpts/sd-image-variations-diffusers"
+pretrained_vae_path: "/mnt/data/vivid_ckpts/sd-vae-ft-mse"
+image_encoder_path: "/mnt/data/vivid_ckpts/sd-image-variations-diffusers/image_encoder"
 
-denoising_unet_path: "ckpts/ViViD/denoising_unet.pth"
-reference_unet_path: "ckpts/ViViD/reference_unet.pth"
-pose_guider_path: "ckpts/ViViD/pose_guider.pth"
+denoising_unet_path: "/mnt/data/vivid_ckpts/ViViD/denoising_unet.pth"
+reference_unet_path: "/mnt/data/vivid_ckpts/ViViD/reference_unet.pth"
+pose_guider_path: "/mnt/data/vivid_ckpts/ViViD/pose_guider.pth"
 
-motion_module_path: "ckpts/MotionModule/mm_sd_v15_v2.ckpt"
+motion_module_path: "/mnt/data/vivid_ckpts/mm_sd_v15_v2.ckpt"
 
 inference_config: "./configs/inference/inference.yaml"
 weight_dtype: 'fp16'
-L: 48
+L: 2000
 
 model_video_paths:
+  - "data/videos/heygen2.mp4"
+  - "data/videos/heygen3.mp4"
   - "data/videos/upper1.mp4"
 
 cloth_image_paths:
-  - "data/cloth/00057_00.jpg"
-  - "data/cloth/00126_00.jpg"
+  - "data/cloth/1060641_in_xl.jpg"
+  - "data/cloth/1084511_in_xl.jpg"
+  - "data/cloth/1084514_in_xl.jpg"
+  - "data/cloth/1225119_in_xl.jpg"
+  - "data/cloth/1225628_in_xl.jpg"
+  - "data/cloth/1231288_in_xl.jpg"
+  - "data/cloth/1233179_in_xl.jpg"
+  - "data/cloth/1242147_in_xl.jpg"
+  - "data/cloth/1254394_in_xl.jpg"
+  - "data/cloth/1258465_in_xl.jpg"
+  - "data/cloth/1258472_in_xl.jpg"
