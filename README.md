@@ -69,6 +69,14 @@ The main contributions of this application are:
     as we can see in `asset/vivid_sam_hands.mp4` video, even though we fix the hand inconsistency, the cloth's consistent issue still remain, in order to fix such problem, we applied Input Noise Modification. Instead of using random latent noise as the initial input. I first denoise first frame's latent, and combine it with the original noise. in here, the adding noise step is a tune-able hyper-parameter. Since ViViD is using DDIM so we apply adding noise after the denosing is complete to have more control on the noise level. I observe ~600 can produce significant in general cases I have tested. please tune this base on your own purpose of this application. please check `./src/pipelines/pipeline_pose2vid_long.py` for detail implementation. After all modification, our final results for text driven and image driven could be found in `asset/VI2Video-VTON_img_result.mp4` and `asset/VI2Video-VTON_text_result.mp4`
     
 
+## Comparison Results ViViD-Vanilla Vs VI2Video-VTON
+![result1](./asset/vivid-VI2V.gif)
+
+## More Examples
+![result2](./asset/VI2V_upper.gif)
+![result3](./asset/VI2V_vango.gif)
+![result4](./asset/example_result_dress.gif)
+![result5](./asset/vivid-VI2V2.gif.gif)
 
 
  
